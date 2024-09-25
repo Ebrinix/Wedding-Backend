@@ -5,16 +5,9 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const protected = require("./routes/protected");
-const withdrawalProtected = require("./routes/withdrawal/protected");
-const depositProtected = require("./routes/deposit/protected");
-const cryptoevents = require("./routes/cryptoevents");
-const portfolio = require("./routes/portfolio");
-const watu_protected = require("./routes/watu/protected");
-const web3 = require("./routes/web3");
-const kyc = require("./routes/verify/protected");
+const rvsp = require("./routes/rvsp");
 
-const apiMiddleware = require("./middleware/apiAuth");
+// const apiMiddleware = require("./middleware/apiAuth");
 
 dotenv.config({ path: ".env" }); // Load .env file
 
@@ -30,16 +23,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const allowedOrigins = [
-  "https://usecube.io",
-  "https://www.usecube.io",
   "http://localhost:3000",
   "http://localhost:3001",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://egochain.org",
-  "https://www.egochain.org",
-  "https://event.egochain.org",
-  "https://www.event.egochain.org",
 ];
 app.use(morgan("dev"));
 
@@ -58,16 +43,7 @@ app.use(
 app.use(bodyParser.json());
 
 // Route definitions
-app.use("/api", apiMiddleware.apiAuth, protected);
-app.use("/api/withdrawal", apiMiddleware.apiAuth, withdrawalProtected);
-app.use("/api/deposit", apiMiddleware.apiAuth, depositProtected);
-
-app.use("/portfolio", apiMiddleware.apiAuth, portfolio);
-app.use("/api/watu", apiMiddleware.apiAuth, watu_protected);
-app.use("/kyc", apiMiddleware.apiAuth, kyc);
-app.use("/pub", require("./routes/pub"));
-app.use("/watu/webhook", require("./routes/watu/watu"));
-app.use("/web3", web3);
+app.use("/rvsp", rvsp);
 
 // Not Found error handler
 app.use((req, res, next) => {

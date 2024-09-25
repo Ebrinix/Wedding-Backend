@@ -3,9 +3,9 @@ name: Main.js CI
 
 on:
   push:
-    branches: [deploy]
+    branches: [deploy1]
   pull_request:
-    branches: [deploy]
+    branches: [deploy1]
 
 jobs:
   build:
@@ -26,8 +26,6 @@ jobs:
     - name: 'Create env file'
       run: |
           echo whoami
-          # cp -R /var/www/dataseed-node-modules/node_modules /var/www/sandbox.egoras.com/actions-runner/_work/EgoPay-Staging/EgoPay-Staging/
-          # cp -R /var/www/dataseed-node-modules/node_modules /var/www/saltlake.egoras.com/actions-runner/_work/Salt-Lake-Backend/Salt-Lake-Backend/
           npm install
           touch .env
           echo DB_HOST=${{secrets.DB_HOST}} >> .env
@@ -38,29 +36,6 @@ jobs:
           echo DB_PORT=${{secrets.DB_PORT}} >> .env
           echo APP_HOST=${{secrets.APP_HOST}} >> .env
           echo PORT=${{secrets.PORT}} >> .env
-          echo IS_GOOGLE_AUTH_ENABLE=${{secrets.IS_GOOGLE_AUTH_ENABLE}} >> .env
-          echo TERMII_API_KEY=${{secrets.TERMII_API_KEY}} >> .env
-          echo TERMII_SEC_KEY=${{secrets.TERMII_SEC_KEY}} >> .env
-          echo SALTROUNDS=${{secrets.SALTROUNDS}} >> .env
-          echo SECRET=${{secrets.SECRET}} >> .env
-          echo WEB3_PROVIDER=${{secrets.WEB3_PROVIDER}} >> .env
-          echo WATU_PUBLIC_KEY=${{secrets.WATU_PUBLIC_KEY}} >> .env
-          echo WATU_SECRET_KEY=${{secrets.WATU_SECRET_KEY}} >> .env
-          echo WATU_ENCRYPTION_KEY=${{secrets.WATU_ENCRYPTION_KEY}} >> .env
-          echo WATU_IV_KEY=${{secrets.WATU_IV_KEY}} >> .env
-          echo PRIVIDUS_BANK_ID=${{secrets.PRIVIDUS_BANK_ID}} >> .env
-          echo WATU_BASE_URL=${{secrets.WATU_BASE_URL}} >> .env
-          echo WATU_PIN=${{secrets.WATU_PIN}} >> .env
-          echo WATU_DEPOSIT_PUBLIC_KEY=${{secrets.WATU_DEPOSIT_PUBLIC_KEY}} >> .env
-          echo WATU_DEPOSIT_SECRET_KEY=${{secrets.WATU_DEPOSIT_SECRET_KEY}} >> .env
-          echo WATU_DEPOSIT_ENCRYPTION_KEY=${{secrets.WATU_DEPOSIT_ENCRYPTION_KEY}} >> .env
-          echo WATU_DEPOSIT_IV_KEY=${{secrets.WATU_DEPOSIT_IV_KEY}} >> .env
-          echo YOU_VERIFY_API_KEY=${{secrets.YOU_VERIFY_API_KEY}} >> .env
-          echo YOU_VERIFY_LIVE_API_KEY=${{secrets.YOU_VERIFY_LIVE_API_KEY}} >> .env
-          echo YOU_VERIFY_MAINNET_ENDPOINT=${{secrets.YOU_VERIFY_MAINNET_ENDPOINT}} >> .env
-          echo YOU_VERIFY_TESTNET_ENDPOINT=${{secrets.YOU_VERIFY_TESTNET_ENDPOINT}} >> .env
-          echo KORA_PBK_LIVE_KEY=${{secrets.KORA_PBK_LIVE_KEY}} >> .env
-
           
     - name: 'Restart server'
       run: |
