@@ -24,8 +24,28 @@ router.post(
 );
 
 router.post(
+    "/upload-images",
+    rvspController.uploadImages
+);
+
+router.post(
     "/authorize-access-code",
     rvspController.authenticateAccessCode
+);
+
+router.post(
+    "/update-image-status",
+    rvspController.updateImageStatus
+);
+
+router.get(
+    "/fetch-all-images",
+    rvspController.fetchAllImages
+);
+
+router.get(
+    "/fetch-all-approved-images",
+    rvspController.fetchAllApprovedImages
 );
 
 router.get(

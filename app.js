@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const dotenv = require("dotenv");
+const fileUpload = require('express-fileupload');
 require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -40,7 +41,18 @@ app.use(
   })
 );
 
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: path.join(__dirname, "tmp"),
+    createParentPath: true,
+    // limits: { fileSize: 1024 }
+  })
+);
 app.use(bodyParser.json());
+
+app.use(express.static(__dirname + "/public/images"));
+
 
 // Route definitions
 app.use("/rvsp", rvsp);
