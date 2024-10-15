@@ -29,6 +29,11 @@ router.post(
 );
 
 router.post(
+    "/upload-couple-images",
+    rvspController.uploadAdminImages
+);
+
+router.post(
     "/authorize-access-code",
     rvspController.authenticateAccessCode
 );
@@ -41,6 +46,11 @@ router.post(
 router.get(
     "/fetch-all-images",
     rvspController.fetchAllImages
+);
+
+router.get(
+    "/fetch-all-couple-images",
+    rvspController.fetchAllCouplesImages
 );
 
 router.get(

@@ -7,11 +7,14 @@ const Op = Sequelize.Op;
 const fs = require('fs');
 const path = require('path');
 var { Rvsp, UploadImage } = require("../../models");
+const { log } = require("console");
 // const { differenceInHours } = require("date-fns");
 
 
 const registerForEvent = async (req, res) => {
   const { groupName, numberOfInvites } = req.body;
+
+  console.log(req.body)
 
   try {
     // console.log(txnId);
@@ -34,15 +37,17 @@ const registerForEvent = async (req, res) => {
         groupName: groupName,
         numberOfInvites: numberOfInvites,
         accessCodes: randomCodes,
-        approve: "TRUE",
+        approve: "FALSE",
     }
 
     const registerEvent = await Rvsp.create(payload);
 
     return successResponse(req, res, {
-        message: "Wedding invitation created successfully"
+        message: "Wedding invitation created successfully",
+        code: randomCodes
     });
   } catch (error) {
+    console.log(error)
     return errorResponse(req, res, error.message);
   }
 };
@@ -89,15 +94,18 @@ const changeApprovalStatus = async (req, res) => {
           id,
         },
       });
+
+      console.log(findEvent);
+      
   
       // Throw an error if the event does not exist
       if (!findEvent) {
         throw new Error("Invitation does not exist.");
       }
 
-    let regularArray = findEvent.map(asset => asset.get({ plain: true }));
+    // let regularArray = findEvent.map(asset => asset.get({ plain: true }));
 
-    console.log(regularArray);
+    // console.log(regularArray);
   
       // Update the approval status
       await Rvsp.update(
@@ -109,6 +117,8 @@ const changeApprovalStatus = async (req, res) => {
         message: "Approval status updated successfully", // Updated the message
       });
     } catch (error) {
+      console.log(error);
+      
       return errorResponse(req, res, error.message);
     }
 };
@@ -250,6 +260,9 @@ const uploadImages = async (req, res) => {
     try {
         // console.log(req, "fkee");
         // Check if any files were provided
+
+        console.log(req.files);
+        
         if (!req.files || Object.keys(req.files).length === 0) {
             throw new Error("Please supply at least one product image");
         }
@@ -284,7 +297,8 @@ const uploadImages = async (req, res) => {
 
             let payload = {
                 image: fileName,
-                status: "DECLINE"
+                status: "DECLINE",
+                imgType: "GUEST",
             }
             await UploadImage.create(payload);
     
@@ -304,6 +318,72 @@ const uploadImages = async (req, res) => {
       console.error(error);
       return errorResponse(req, res, error.message);
     }
+};
+
+
+
+const uploadAdminImages = async (req, res) => {
+  try {
+      // console.log(req, "fkee");
+      // Check if any files were provided
+
+      console.log(req.files);
+      
+      if (!req.files || Object.keys(req.files).length === 0) {
+          throw new Error("Please supply at least one product image");
+      }
+  
+      // Check if number of files is between 1 and 10
+      const fileKeys = Object.keys(req.files);
+
+    
+      if (fileKeys.length < 1 || fileKeys.length > 10) {
+          throw new Error("Please supply between 1 and 10 product images");
+      }
+  
+      const imagePaths = [];
+      const base64Contents = [];
+  
+      for (const key of fileKeys) {
+          const productImages = req.files[key];
+  
+          // Check if `productImages` is an array (multiple files for the same key)
+          const imagesArray = Array.isArray(productImages) ? productImages : [productImages];
+  
+          for (const productImage of imagesArray) {
+          // Generate a unique file name
+          const fileName = new Date().getTime().toString() + key + path.extname(productImage.name);
+          const savePath = path.join(__dirname, "..", "..", "public", "images", fileName);
+  
+          // Move the file to the server
+          await productImage.mv(savePath);
+
+          // Add the file path for any further use
+          imagePaths.push(savePath);
+
+          let payload = {
+              image: fileName,
+              status: "DECLINE",
+              imgType: "ADMIN"
+          }
+          await UploadImage.create(payload);
+  
+          // Read file and convert to base64
+          const base64Content = fs.readFileSync(savePath, { encoding: "base64" });
+          base64Contents.push(base64Content);
+          }
+      }
+
+      // Process the images as needed (e.g., store image paths or base64 content in the database)
+
+      return successResponse(req, res, {
+          message: `${imagePaths.length} product image(s) uploaded successfully`,
+          images: imagePaths, // Returning the paths of the uploaded images
+      });
+  } catch (error) {
+    console.error(error);
+    return errorResponse(req, res, error.message);
+  }
 };
 
 // Admin
@@ -344,7 +424,39 @@ const fetchAllImages = async (req, res) => {
   
     try {
       // Find the event by the id
-      const findEvent = await UploadImage.findAll();
+      const findEvent = await UploadImage.findAll({
+        where: {
+          imgType: 'GUEST'
+        }
+      });
+  
+      // Throw an error if the event does not exist
+      if (!findEvent) {
+        throw new Error("No image Found.");
+      }
+
+      return successResponse(req, res, {
+        data: findEvent
+        // message: "Approval status updated successfully", // Updated the message
+      });
+    } catch (error) {
+      return errorResponse(req, res, error.message);
+    }
+};
+
+// Admin
+const fetchAllCouplesImages = async (req, res) => {
+    // const { id, action } = req.body;
+  
+    console.log(req.body);
+  
+    try {
+      // Find the event by the id
+      const findEvent = await UploadImage.findAll({
+        where: {
+          imgType: 'ADMIN'
+        }
+      });
   
       // Throw an error if the event does not exist
       if (!findEvent) {
@@ -422,6 +534,8 @@ module.exports = {
   uploadImages,
   updateImageStatus,
   fetchAllImages,
-  fetchAllApprovedImages
+  fetchAllApprovedImages,
+  uploadAdminImages,
+  fetchAllCouplesImages
 //   initialAdd
 };

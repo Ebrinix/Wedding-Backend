@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('APPROVE', 'DECLINE'),
         allowNull: false
       },
+      imgType: {
+        type: DataTypes.ENUM('ADMIN', 'GUEST'),
+        allowNull: false
+      },
   }, {});
   UploadImage.associate = function(models) {
     // associations can be defined here
