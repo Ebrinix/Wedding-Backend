@@ -30,7 +30,7 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://91.223.236.249",
   "https://sefunmiandcharles.com.ng",
-  "http://www.sefunmiandcharles.com.ng",
+  "https://www.sefunmiandcharles.com.ng",
 ];
 app.use(morgan("dev"));
 
