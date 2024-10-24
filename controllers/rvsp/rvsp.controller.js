@@ -44,10 +44,42 @@ const registerForEvent = async (req, res) => {
 
     return successResponse(req, res, {
         message: "Wedding invitation created successfully",
-        code: randomCodes
+        code: randomCodes,
+        id: registerEvent.id
     });
   } catch (error) {
     console.log(error)
+    return errorResponse(req, res, error.message);
+  }
+};
+
+
+
+const checkStatus = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the event by the id
+    const findEvent = await Rvsp.findOne({
+      where: {
+        id,
+      },
+    });
+
+    // console.log(findEvent);
+    
+    // Throw an error if the event does not exist
+    if (!findEvent) {
+      throw new Error("Invitation does not exist.");
+    }
+
+    return successResponse(req, res, {
+      // message: "Approval status updated successfully", // Updated the message
+      status: findEvent.approve
+    });
+  } catch (error) {
+    console.log(error);
+    
     return errorResponse(req, res, error.message);
   }
 };
@@ -536,6 +568,7 @@ module.exports = {
   fetchAllImages,
   fetchAllApprovedImages,
   uploadAdminImages,
-  fetchAllCouplesImages
+  fetchAllCouplesImages,
+  checkStatus
 //   initialAdd
 };

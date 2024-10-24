@@ -49,6 +49,11 @@ router.get(
 );
 
 router.get(
+    "/check-status/:id",
+    rvspController.checkStatus
+);
+
+router.get(
     "/fetch-all-couple-images",
     rvspController.fetchAllCouplesImages
 );
